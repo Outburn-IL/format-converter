@@ -1,2 +1,5 @@
-# .npmignore
-node_modules
+*
+!dist/*
+!LICENSE
+!package.json
+!README.md
