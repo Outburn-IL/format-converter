@@ -1,0 +1,49 @@
+{
+  "name": "@outburn/format-converter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "eslint src",
+    "build": "npm run clean && tsup",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run"
+  },
+  "author": "Outburn Ltd.",
+  "license": "MIT",
+  "dependencies": {
+    "csvtojson": "^2.0.14",
+    "fast-xml-parser": "^4.5.3",
+    "hl7-dictionary": "^1.0.1",
+    "hl7js": "^0.0.6",
+    "jsonata": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "eslint": "^9.39.1",
+    "prettier": "^3.7.3",
+    "rimraf": "^6.1.2",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^4.0.14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Outburn-IL/format-converter.git"
+  },
+  "bugs": "https://github.com/Outburn-IL/format-converter/issues",
+  "homepage": "https://github.com/Outburn-IL/format-converter#readme"
+}

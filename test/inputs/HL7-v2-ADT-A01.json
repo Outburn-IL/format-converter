@@ -1,0 +1,223 @@
+{
+  "MSH": {
+    "SegmentDescription": "Message Header",
+    "MessageLine": 1,
+    "FieldSeparator": "|",
+    "EncodingCharacters": "^~\\&",
+    "SendingApplication": {
+      "NamespaceID": "HIS"
+    },
+    "SendingFacility": {
+      "NamespaceID": "Hospital1"
+    },
+    "ReceivingApplication": {
+      "NamespaceID": "IRIS"
+    },
+    "DateTimeOfMessage": {
+      "Time": "2023-04-06T20:45"
+    },
+    "MessageType": {
+      "MessageCode": "ADT",
+      "TriggerEvent": "A01"
+    },
+    "MessageControlID": "d6b56e78-f6d1-4c82-9a9c-7e777a93e1af",
+    "ProcessingID": {
+      "ProcessingID": "P"
+    },
+    "VersionID": {
+      "VersionID": "2.5.1"
+    }
+  },
+  "EVN": {
+    "SegmentDescription": "Event Type",
+    "MessageLine": 2,
+    "EventTypeCode": "A01",
+    "RecordedDateTime": {
+      "Time": "2023-04-04T20:45"
+    }
+  },
+  "PID": {
+    "SegmentDescription": "Patient Identification",
+    "MessageLine": 3,
+    "SetID": "58705",
+    "PatientID": {
+      "IDNumber": "58705"
+    },
+    "PatientIdentifierList": {
+      "IDNumber": "1",
+      "IdentifierTypeCode": "MR"
+    },
+    "PatientName": {
+      "FamilyName": {
+        "Surname": "DemoTest1"
+      },
+      "GivenName": "DemoTest1"
+    },
+    "DateTimeOfBirth": {
+      "Time": "2022-01-01"
+    },
+    "AdministrativeSex": "F",
+    "PatientAddress": {
+      "StreetAddress": {
+        "StreetOrMailingAddress": "Oren Street"
+      },
+      "City": "Haifa"
+    },
+    "CountyCode": "IL",
+    "PhoneNumber_Home": {
+      "TelephoneNumber": "09-12345678"
+    },
+    "PhoneNumber_Business": {
+      "TelephoneNumber": "054-123456789"
+    },
+    "PatientAccountNumber": {
+      "IDNumber": "Account1"
+    }
+  },
+  "PV1": {
+    "SegmentDescription": "Patient Visit",
+    "MessageLine": 4,
+    "SetID": "1",
+    "PatientClass": "E",
+    "AssignedPatientLocation": {
+      "PointOfCare": "ER",
+      "Room": "101",
+      "Bed": "1",
+      "Facility": {
+        "NamespaceID": "DemoHospital"
+      }
+    },
+    "AdmissionType": "E",
+    "HospitalService": "MED",
+    "AdmitSource": "7",
+    "AdmittingDoctor": {
+      "IDNumber": "37",
+      "FamilyName": {
+        "Surname": "DISNEY"
+      },
+      "GivenName": "WALT",
+      "AssigningAuthority": {
+        "NamespaceID": "DemoHospital"
+      },
+      "IdentifierTypeCode": "CI"
+    },
+    "PatientType": "2",
+    "VisitNumber": {
+      "IDNumber": "Admission1",
+      "AssigningAuthority": {
+        "NamespaceID": "DemoHospital"
+      }
+    },
+    "FinancialClass": {
+      "FinancialClassCode": "4"
+    },
+    "ServicingFacility": "1",
+    "AccountStatus": "G",
+    "AdmitDateTime": {
+      "Time": "2005-01-10"
+    }
+  },
+  "DG1": {
+    "SegmentDescription": "Diagnosis",
+    "MessageLine": 5,
+    "SetID": "1",
+    "DiagnosisCodingMethod": "DH",
+    "DiagnosisCode_DG1": {
+      "Identifier": "ABDPAIN",
+      "Text": "Abdominal pain",
+      "NameOfCodingSystem": "DH"
+    },
+    "DiagnosisDescription": "Abdominal Pain ",
+    "DiagnosisDateTime": {
+      "Time": "2023-04-06"
+    },
+    "DiagnosisType": "A",
+    "MajorDiagnosticCategory": {
+      "Identifier": " IN1"
+    },
+    "DiagnosticRelatedGroup": {
+      "Identifier": "1"
+    },
+    "DRGApprovalIndicator": "MEDICARE",
+    "DRGGrouperReviewCode": "3",
+    "OutlierType": {
+      "Identifier": "MEDICARE"
+    },
+    "AttestationDateTime": {
+      "Time": "2023-04-06"
+    },
+    "DiagnosisIdentifier": {
+      "EntityIdentifier": "Condition1"
+    },
+    "DiagnosisActionCode": "unconfirmed",
+    "DG122": " "
+  },
+  "IN1": {
+    "SegmentDescription": "Insurance",
+    "MessageLine": 6,
+    "SetID": "2",
+    "InsurancePlanID": {
+      "Identifier": "InsuranceIdentifier1"
+    },
+    "InsuranceCompanyID": {
+      "IDNumber": "10"
+    },
+    "InsuranceCompanyName": {
+      "OrganizationName": "Health Insurance Global"
+    },
+    "InsuranceCompanyAddress": {
+      "StreetAddress": {
+        "StreetOrMailingAddress": "PO BOX 94776"
+      },
+      "City": "HOLLYWOOD",
+      "StateOrProvince": "CA",
+      "ZipOrPostalCode": "441414776"
+    },
+    "InsuranceCoPhoneNumber": {
+      "TelephoneNumber": "8003621279"
+    },
+    "GroupNumber": "PUBSUMB",
+    "InsuredsGroupEmpName": {
+      "OrganizationName": "Cartoon Ducks Inc"
+    },
+    "PlanType": "7",
+    "NameOfInsured": {
+      "FamilyName": {
+        "Surname": "DUCK"
+      },
+      "GivenName": "DONALD",
+      "SecondAndFurtherGivenNamesOrInitialsThereof": "D"
+    },
+    "InsuredsRelationshipToPatient": {
+      "Identifier": "SEL"
+    },
+    "InsuredsDateOfBirth": {
+      "Time": "1924-10-10"
+    },
+    "InsuredsAddress": {
+      "StreetAddress": {
+        "StreetOrMailingAddress": "111 DUCK ST"
+      },
+      "City": "FOWL",
+      "StateOrProvince": "CA",
+      "ZipOrPostalCode": "999990000"
+    },
+    "PolicyNumber": "056269770",
+    "InsuredsEmploymentStatus": {
+      "Identifier": "PT"
+    },
+    "InsuredsAdministrativeSex": "M",
+    "InsuredsEmployersAddress": {
+      "StreetAddress": {
+        "StreetOrMailingAddress": "111"
+      },
+      "OtherDesignation": "DUCK ST",
+      "StateOrProvince": "FOWL",
+      "ZipOrPostalCode": "CA",
+      "Country": "999990000"
+    },
+    "InsuredsIDNumber": {
+      "IDNumber": "1"
+    }
+  }
+}
