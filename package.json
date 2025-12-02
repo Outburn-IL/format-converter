@@ -20,6 +20,23 @@
     "prepublishOnly": "npm run build",
     "test": "vitest run"
   },
+  "keywords": [
+    "format-converter",
+    "data-conversion",
+    "csv",
+    "xml",
+    "json",
+    "hl7",
+    "hl7v2",
+    "healthcare",
+    "parser",
+    "typescript",
+    "converter",
+    "data-transformation",
+    "message-parsing",
+    "healthcare-integration",
+    "interoperability"
+  ],
   "author": "Outburn Ltd.",
   "license": "MIT",
   "dependencies": {
