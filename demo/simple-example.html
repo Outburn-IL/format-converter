@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Format Converter - Simple Example</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .example {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .error {
+            border-left-color: #e74c3c;
+            background: #fff5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Format Converter - Simple Example</h1>
+        <p class="subtitle">Basic usage of the Format Converter library in the browser</p>
+
+        <div class="example">
+            <h3>Test Library Loading</h3>
+            <button onclick="testLibraryLoading()">Test Library</button>
+            <div id="libraryResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="example">
+            <h3>CSV to JSON Conversion</h3>
+            <pre id="csvInput">name,age,city
+John,30,New York
+Jane,25,London
+Bob,35,Paris</pre>
+            <button onclick="convertCsv()">Convert CSV to JSON</button>
+            <div id="csvResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="example">
+            <h3>XML to JSON Conversion</h3>
+            <pre id="xmlInput">&lt;person&gt;
+  &lt;name&gt;John Doe&lt;/name&gt;
+  &lt;age&gt;30&lt;/age&gt;
+  &lt;city&gt;New York&lt;/city&gt;
+&lt;/person&gt;</pre>
+            <button onclick="convertXml()">Convert XML to JSON</button>
+            <div id="xmlResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="example">
+            <h3>Type Detection</h3>
+            <button onclick="testTypeDetection()">Test Type Detection</button>
+            <div id="typeResult" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script src="../dist/browser/browser.js"></script>
+    <script>
+        function showResult(elementId, content, isError = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = isError ? `<strong>Error:</strong> ${content}` : content;
+            element.className = isError ? 'result error' : 'result';
+            element.style.display = 'block';
+        }
+
+        function testLibraryLoading() {
+            try {
+                if (typeof FormatUtils !== 'undefined') {
+                    const { TypeConverter, FormatDetector } = FormatUtils;
+                    showResult('libraryResult', `
+                        <strong>✅ Library loaded successfully!</strong><br>
+                        Browser-compatible build loaded<br>
+                        Available: TypeConverter, FormatDetector<br>
+                        <em style="color: orange;">Note: FormatConverter is not available in browser build due to HL7 dependencies</em><br>
+                        TypeConverter: ${ typeof TypeConverter === 'function' ? 'Available' : 'Not available'}<br>
+                        FormatDetector: ${ typeof FormatDetector === 'function' ? 'Available' : 'Not available'}
+                    `);
+                } else {
+                    showResult('libraryResult', 'FormatUtils is not defined', true);
+                }
+            } catch (error) {
+                showResult('libraryResult', error.message, true);
+            }
+        }
+
+        function convertCsv() {
+            showResult('csvResult', 'CSV conversion requires FormatConverter which is not available in browser build', true);
+        }
+
+        function convertXml() {
+            showResult('xmlResult', 'XML conversion requires FormatConverter which is not available in browser build', true);
+        }
+
+        function testTypeDetection() {
+            try {
+                const { TypeConverter } = FormatUtils;
+                const typeConverter = new TypeConverter();
+                
+                const tests = [
+                    { input: '42', expected: 'number' },
+                    { input: 'true', expected: 'boolean' },
+                    { input: 'hello', expected: 'string' },
+                    { input: '2023-12-04', expected: 'date' }
+                ];
+                
+                const results = tests.map(test => {
+                    const detected = typeConverter.detectType(test.input);
+                    return `Input: "${test.input}" → Detected: ${detected}`;
+                });
+                
+                showResult('typeResult', results.join('<br>'));
+            } catch (error) {
+                showResult('typeResult', error.message, true);
+            }
+        }
+
+        // Auto-test library loading
+        testLibraryLoading();
+    </script>
+</body>
+</html>

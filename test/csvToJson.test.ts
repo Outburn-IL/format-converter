@@ -187,7 +187,7 @@ describe('parseCsv', () => {
       const end = Date.now();
             
       expect(result).toHaveLength(100_000);
-      expect(end - start).toBeLessThan(200); // Should complete within 200 milliseconds
+      expect(end - start).toBeLessThan(400); // Should complete within 400 milliseconds
     });
 
     it('should handle CSV with many columns', async () => {

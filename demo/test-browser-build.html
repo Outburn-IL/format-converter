@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Build Test</title>
+</head>
+<body>
+    <h1>Browser Build Test</h1>
+    <div id="results"></div>
+
+    <script src="../dist/browser/browser.js"></script>
+    <script>
+        function runTests() {
+            const results = [];
+            
+            try {
+                // Test FormatUtils global is available
+                if (typeof FormatUtils !== 'undefined') {
+                    results.push('✅ FormatUtils global is available');
+                    
+                    // Test TypeConverter
+                    const { TypeConverter } = FormatUtils;
+                    const typeConverter = new TypeConverter();
+                    const detectedType = typeConverter.stringToContentFormat('json');
+                    results.push(`✅ TypeConverter.stringToContentFormat('json') = ${detectedType}`);
+                    
+                    // Test FormatDetector
+                    const { FormatDetector } = FormatUtils;
+                    const formatDetector = new FormatDetector();
+                    const format = formatDetector.detectFormat('{"key": "value"}');
+                    results.push(`✅ FormatDetector.detectFormat('{"key": "value"}') = ${format}`);
+                    
+                    // Test that FormatConverter is NOT available (as expected)
+                    const hasFormatConverter = 'FormatConverter' in FormatUtils;
+                    results.push(`✅ FormatConverter excluded from browser build: ${!hasFormatConverter}`);
+                    
+                } else {
+                    results.push('❌ FormatUtils global is not available');
+                }
+            } catch (error) {
+                results.push(`❌ Error: ${error.message}`);
+            }
+            
+            document.getElementById('results').innerHTML = results.join('<br>');
+        }
+        
+        runTests();
+    </script>
+</body>
+</html>

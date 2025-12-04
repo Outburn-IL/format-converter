@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Format Detector - Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        .demo-section h2 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        .results {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .error {
+            border-left-color: #e74c3c;
+        }
+        .success {
+            border-left-color: #27ae60;
+        }
+        .warning {
+            border-left-color: #f39c12;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .secondary {
+            background: #95a5a6;
+        }
+        .secondary:hover {
+            background: #7f8c8d;
+        }
+        .button-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .format-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        .format-json {
+            background: #e8f5e8;
+            color: #27ae60;
+        }
+        .format-xml {
+            background: #fff3e0;
+            color: #f39c12;
+        }
+        .format-csv {
+            background: #e3f2fd;
+            color: #2196f3;
+        }
+        .format-hl7 {
+            background: #f3e5f5;
+            color: #9c27b0;
+        }
+        .format-unknown {
+            background: #ffebee;
+            color: #f44336;
+        }
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .format-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .format-card:hover {
+            background: #f0f0f0;
+            border-color: #3498db;
+        }
+        .format-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+        }
+        .format-card pre {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin: 10px 0 0 0;
+            overflow-x: auto;
+            border: 1px solid #e0e0e0;
+        }
+        .detection-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-item {
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .live-demo {
+            background: #e8f4f8;
+            border: 1px solid #b3d9e8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .confidence-meter {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .confidence-bar {
+            height: 100%;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+        .confidence-high { background: #27ae60; }
+        .confidence-medium { background: #f39c12; }
+        .confidence-low { background: #e74c3c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Format Detector - Demo</h1>
+        <p class="subtitle">Intelligent automatic detection of data formats and content types</p>
+
+        <div class="live-demo">
+            <h2>🔬 Live Format Detection</h2>
+            <p>Paste or type any data below to see real-time format detection in action!</p>
+            <textarea id="liveInput" placeholder="Paste your data here to detect its format automatically...
+
+Examples:
+• JSON: {"name": "John", "age": 30}
+• XML: <person><name>John</name></person>
+• CSV: name,age\nJohn,30
+• HL7: MSH|^~\&|SYSTEM|...
+"></textarea>
+            
+            <div id="liveResults" class="results" style="display:none;">
+                <div id="detectionBadges"></div>
+                <div class="detection-stats" id="detectionStats"></div>
+                <div id="confidenceSection" style="display:none;">
+                    <strong>Detection Confidence:</strong>
+                    <div class="confidence-meter">
+                        <div id="confidenceBar" class="confidence-bar"></div>
+                    </div>
+                    <div id="confidenceText" style="text-align: center; margin-top: 5px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📋 Format Detection Test Suite</h2>
+            <p>Click on any format example below to test the detection algorithm:</p>
+            
+            <div class="format-grid">
+                <div class="format-card" onclick="loadExample('json')">
+                    <h3><span class="format-badge format-json">JSON</span>JavaScript Object Notation</h3>
+                    <p>Structured data format with key-value pairs</p>
+                    <pre>{"users": [{"name": "John", "active": true}]}</pre>
+                </div>
+
+                <div class="format-card" onclick="loadExample('xml')">
+                    <h3><span class="format-badge format-xml">XML</span>eXtensible Markup Language</h3>
+                    <p>Hierarchical markup language with tags</p>
+                    <pre>&lt;users&gt;&lt;user name="John" active="true"/&gt;&lt;/users&gt;</pre>
+                </div>
+
+                <div class="format-card" onclick="loadExample('csv')">
+                    <h3><span class="format-badge format-csv">CSV</span>Comma-Separated Values</h3>
+                    <p>Tabular data with comma-delimited fields</p>
+                    <pre>name,age,city\nJohn,30,NYC\nJane,25,LA</pre>
+                </div>
+
+                <div class="format-card" onclick="loadExample('hl7')">
+                    <h3><span class="format-badge format-hl7">HL7</span>Health Level 7 v2.x</h3>
+                    <p>Healthcare messaging standard</p>
+                    <pre>MSH|^~\&|SYSTEM|SENDER||RECEIVER|20231204</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>⚙️ Advanced Detection Features</h2>
+            <div class="button-group">
+                <button onclick="testEdgeCase('malformed')">Test Malformed Data</button>
+                <button onclick="testEdgeCase('mixed')">Test Mixed Formats</button>
+                <button onclick="testEdgeCase('minimal')">Test Minimal Data</button>
+                <button onclick="testEdgeCase('large')">Test Large Dataset</button>
+                <button onclick="runBenchmark()">Performance Benchmark</button>
+            </div>
+
+            <div id="advancedResults" class="results" style="display:none;">
+                <div id="advancedOutput"></div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>📊 Detection Algorithm Insights</h2>
+            <p>Understanding how the format detector works:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <strong>🎯 JSON Detection</strong>
+                    <ul style="font-size: 0.9em; margin: 10px 0;">
+                        <li>Validates JSON.parse() first</li>
+                        <li>Counts curly braces and colons</li>
+                        <li>Looks for key-value patterns</li>
+                        <li>Excludes embedded XML content</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <strong>📄 XML Detection</strong>
+                    <ul style="font-size: 0.9em; margin: 10px 0;">
+                        <li>Matches opening/closing tags</li>
+                        <li>Detects XML declarations</li>
+                        <li>Validates tag balance</li>
+                        <li>Recognizes self-closing tags</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <strong>📈 CSV Detection</strong>
+                    <ul style="font-size: 0.9em; margin: 10px 0;">
+                        <li>Analyzes comma distribution</li>
+                        <li>Validates row consistency</li>
+                        <li>Excludes complex characters</li>
+                        <li>Checks header patterns</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                    <strong>🏥 HL7 Detection</strong>
+                    <ul style="font-size: 0.9em; margin: 10px 0;">
+                        <li>Looks for MSH| header</li>
+                        <li>Validates field separators</li>
+                        <li>Checks segment structure</li>
+                        <li>Fast pattern matching</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../dist/browser/browser.js"></script>
+    <script>
+        let formatDetector;
+        let isInitialized = false;
+
+        // Initialize the library
+        function initializeLibrary() {
+            try {
+                if (typeof FormatUtils !== 'undefined') {
+                    const { FormatDetector } = FormatUtils;
+                    formatDetector = new FormatDetector();
+                    console.log('✅ Format Detector library initialized successfully');
+                    isInitialized = true;
+                    return true;
+                } else {
+                    console.error('❌ FormatUtils is not available');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Failed to initialize library:', error.message);
+                return false;
+            }
+        }
+
+        // Live detection as user types
+        function setupLiveDetection() {
+            const input = document.getElementById('liveInput');
+            const results = document.getElementById('liveResults');
+            
+            let debounceTimer;
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const content = input.value.trim();
+                    if (content && isInitialized) {
+                        performDetection(content, true);
+                    } else {
+                        results.style.display = 'none';
+                    }
+                }, 300);
+            });
+        }
+
+        function performDetection(content, isLive = false) {
+            if (!formatDetector) {
+                showError('Format detector not initialized');
+                return;
+            }
+
+            try {
+                const format = formatDetector.detectFormat(content);
+                const contentType = formatDetector.detectContentType(content);
+                const editorLanguage = formatDetector.detectEditorLanguage(content);
+
+                if (isLive) {
+                    showLiveResults(format, contentType, editorLanguage, content);
+                } else {
+                    showResults(format, contentType, editorLanguage, content);
+                }
+            } catch (error) {
+                showError(`Detection error: ${error.message}`);
+            }
+        }
+
+        function showLiveResults(format, contentType, editorLanguage, content) {
+            const resultsDiv = document.getElementById('liveResults');
+            const badgesDiv = document.getElementById('detectionBadges');
+            const statsDiv = document.getElementById('detectionStats');
+
+            // Format badges
+            const formatClass = `format-${format}`;
+            badgesDiv.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <span class="format-badge ${formatClass}">${format.toUpperCase()}</span>
+                    <span style="margin-left: 10px; color: #7f8c8d;">Content Type: ${contentType || 'N/A'}</span>
+                    <span style="margin-left: 10px; color: #7f8c8d;">Editor Language: ${editorLanguage}</span>
+                </div>
+            `;
+
+            // Statistics
+            const stats = analyzeContent(content, format);
+            statsDiv.innerHTML = Object.entries(stats).map(([key, value]) => `
+                <div class="stat-item">
+                    <div class="stat-value">${value}</div>
+                    <div class="stat-label">${key}</div>
+                </div>
+            `).join('');
+
+            // Show confidence (simulated based on format certainty)
+            showConfidence(format, content);
+
+            resultsDiv.className = format === 'unknown' ? 'results warning' : 'results success';
+            resultsDiv.style.display = 'block';
+        }
+
+        function showConfidence(format, content) {
+            const confidenceSection = document.getElementById('confidenceSection');
+            const confidenceBar = document.getElementById('confidenceBar');
+            const confidenceText = document.getElementById('confidenceText');
+
+            let confidence = 0;
+            let className = 'confidence-low';
+
+            // Simple confidence calculation based on format and content characteristics
+            switch (format) {
+                case 'json':
+                    try {
+                        JSON.parse(content);
+                        confidence = 95;
+                        className = 'confidence-high';
+                    } catch {
+                        confidence = 60;
+                        className = 'confidence-medium';
+                    }
+                    break;
+                case 'hl7':
+                    confidence = content.startsWith('MSH|') ? 90 : 70;
+                    className = confidence > 85 ? 'confidence-high' : 'confidence-medium';
+                    break;
+                case 'xml':
+                    confidence = content.includes('<?xml') ? 90 : 75;
+                    className = confidence > 85 ? 'confidence-high' : 'confidence-medium';
+                    break;
+                case 'csv':
+                    const lines = content.split('\n').length;
+                    confidence = lines > 1 ? 80 : 60;
+                    className = confidence > 75 ? 'confidence-high' : 'confidence-medium';
+                    break;
+                default:
+                    confidence = 20;
+                    className = 'confidence-low';
+            }
+
+            confidenceBar.style.width = `${confidence}%`;
+            confidenceBar.className = `confidence-bar ${className}`;
+            confidenceText.textContent = `${confidence}% confident`;
+            confidenceSection.style.display = 'block';
+        }
+
+        function analyzeContent(content, format) {
+            const stats = {
+                'Lines': content.split('\n').length,
+                'Characters': content.length,
+                'Size (bytes)': new Blob([content]).size
+            };
+
+            // Format-specific analysis
+            switch (format) {
+                case 'json':
+                    stats['Objects'] = (content.match(/{/g) || []).length;
+                    stats['Arrays'] = (content.match(/\[/g) || []).length;
+                    break;
+                case 'xml':
+                    stats['Elements'] = (content.match(/<[^/!?][^>]*?>/g) || []).length;
+                    stats['Attributes'] = (content.match(/\w+="[^"]*"/g) || []).length;
+                    break;
+                case 'csv':
+                    stats['Columns'] = Math.max(...content.split('\n').map(line => (line.match(/,/g) || []).length + 1));
+                    stats['Rows'] = content.split('\n').filter(line => line.trim()).length;
+                    break;
+                case 'hl7':
+                    stats['Segments'] = content.split('\n').filter(line => line.trim()).length;
+                    stats['Fields'] = (content.match(/\|/g) || []).length;
+                    break;
+            }
+
+            return stats;
+        }
+
+        function loadExample(type) {
+            const examples = {
+                json: `{
+  "patients": [
+    {
+      "id": "PAT001",
+      "name": "John Doe",
+      "age": 45,
+      "active": true,
+      "address": {
+        "street": "123 Main St",
+        "city": "Springfield",
+        "zipCode": "12345"
+      },
+      "medications": ["aspirin", "lisinopril"]
+    },
+    {
+      "id": "PAT002", 
+      "name": "Jane Smith",
+      "age": 32,
+      "active": false,
+      "address": {
+        "street": "456 Oak Ave",
+        "city": "Portland",
+        "zipCode": "97201"
+      },
+      "medications": []
+    }
+  ],
+  "lastUpdated": "2023-12-04T10:30:00Z"
+}`,
+                xml: `<?xml version="1.0" encoding="UTF-8"?>
+<patients xmlns="http://example.com/medical">
+  <patient id="PAT001" active="true">
+    <name>John Doe</name>
+    <age>45</age>
+    <address>
+      <street>123 Main St</street>
+      <city>Springfield</city>
+      <zipCode>12345</zipCode>
+    </address>
+    <medications>
+      <medication>aspirin</medication>
+      <medication>lisinopril</medication>
+    </medications>
+  </patient>
+  <patient id="PAT002" active="false">
+    <name>Jane Smith</name>
+    <age>32</age>
+    <address>
+      <street>456 Oak Ave</street>
+      <city>Portland</city>
+      <zipCode>97201</zipCode>
+    </address>
+    <medications/>
+  </patient>
+  <lastUpdated>2023-12-04T10:30:00Z</lastUpdated>
+</patients>`,
+                csv: `patientId,name,age,active,street,city,zipCode,medications
+PAT001,"John Doe",45,true,"123 Main St",Springfield,12345,"aspirin;lisinopril"
+PAT002,"Jane Smith",32,false,"456 Oak Ave",Portland,97201,""
+PAT003,"Bob Johnson",67,true,"789 Pine Rd",Seattle,98101,"metformin;atorvastatin;amlodipine"
+PAT004,"Alice Brown",28,true,"321 Elm Dr",Denver,80202,"albuterol"
+PAT005,"Charlie Wilson",55,false,"654 Maple Ln",Austin,73301,""`,
+                hl7: `MSH|^~\\&|EPIC|EPICADT|SMS|SMSADT|20231204103000|CHARRIS|ADT^A01|1817457|D|2.5||
+EVN|A01|20231204103000|||^CHARRIS^CARLA^A^^^^^CURRENT
+PID|1||0000112234^^^MPI^MR||DOE^JOHN^Q^^JR||19801122|M||W|1234 MAIN ST^^DALLAS^TX^75235^USA|GL|(214)271-1234|(214)271-1234|EN|S|BAPT|12343434|999-99-9999||||||||||||||||||||
+NK1|1|DOE^JANE^E||1234 MAIN ST^^DALLAS^TX^75235^USA|(214)271-1234|EC|||||||||||||||||||||||||||||
+PV1|1|I|2000^2012^01||||004777^ATTEND^AARON^A|||SUR|||V1|||004777^ATTEND^AARON^A|INP|CAT|VA|||||||||||||||||||||||||20231204103000|||||||||||
+DG1|1|I9|53081|MAL NEO BLADDER WALL||F|
+GT1|1|1234|DOE^JOHN^Q^^JR||1234 MAIN ST^^DALLAS^TX^75235^USA|(214)271-1234|(214)271-1234|19801122|M|P|||SE|||||||||||||||||||||||||||||||`
+            };
+
+            document.getElementById('liveInput').value = examples[type];
+            performDetection(examples[type], true);
+        }
+
+        function testEdgeCase(type) {
+            const edgeCases = {
+                malformed: `{
+  "name": "John",
+  "age": 30,
+  missing_quote: value,
+  "valid": true
+}`,
+                mixed: `<?xml version="1.0"?>
+<data>
+  <json>{"embedded": "object"}</json>
+  <csv>name,age
+John,30</csv>
+</data>`,
+                minimal: `{"a":1}`,
+                large: generateLargeDataset()
+            };
+
+            document.getElementById('liveInput').value = edgeCases[type];
+            performDetection(edgeCases[type], false);
+            
+            // Show in advanced results
+            const advancedDiv = document.getElementById('advancedResults');
+            const outputDiv = document.getElementById('advancedOutput');
+            
+            outputDiv.innerHTML = `
+                <strong>Edge Case Test: ${type.toUpperCase()}</strong>
+                <p>Testing detection algorithm robustness with ${type} data...</p>
+                <pre style="background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 4px; max-height: 200px; overflow-y: auto;">${edgeCases[type].substring(0, 500)}${edgeCases[type].length > 500 ? '...' : ''}</pre>
+            `;
+            
+            advancedDiv.className = 'results success';
+            advancedDiv.style.display = 'block';
+        }
+
+        function generateLargeDataset() {
+            const records = [];
+            for (let i = 1; i <= 100; i++) {
+                records.push(`PAT${i.toString().padStart(3, '0')},"Patient ${i}",${20 + Math.floor(Math.random() * 60)},${Math.random() > 0.5},"${i} Test St","City${i}",${10000 + i},"med${i}"`);
+            }
+            return `patientId,name,age,active,street,city,zipCode,medications\n${records.join('\n')}`;
+        }
+
+        function runBenchmark() {
+            if (!formatDetector) {
+                showError('Format detector not initialized');
+                return;
+            }
+
+            const testData = [
+                '{"test": true}',
+                '<root><test>true</test></root>',
+                'name,value\ntest,true',
+                'MSH|^~\\&|TEST|TEST|TEST|TEST|20231204||ADT^A01|123|P|2.5',
+                'plain text data'
+            ];
+
+            const iterations = 1000;
+            const results = [];
+
+            testData.forEach((data, index) => {
+                const start = performance.now();
+                for (let i = 0; i < iterations; i++) {
+                    formatDetector.detectFormat(data);
+                }
+                const end = performance.now();
+                results.push({
+                    type: ['JSON', 'XML', 'CSV', 'HL7', 'Plain'][index],
+                    time: end - start,
+                    avgTime: (end - start) / iterations
+                });
+            });
+
+            const advancedDiv = document.getElementById('advancedResults');
+            const outputDiv = document.getElementById('advancedOutput');
+            
+            const benchmarkTable = results.map(result => 
+                `<tr><td>${result.type}</td><td>${result.time.toFixed(2)}ms</td><td>${(result.avgTime * 1000).toFixed(3)}μs</td></tr>`
+            ).join('');
+
+            outputDiv.innerHTML = `
+                <strong>Performance Benchmark Results</strong>
+                <p>Detection performance for ${iterations} iterations per format:</p>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <tr style="background: #ecf0f1; font-weight: bold;">
+                        <td style="padding: 8px; border: 1px solid #ddd;">Format</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">Total Time</td>
+                        <td style="padding: 8px; border: 1px solid #ddd;">Avg per Detection</td>
+                    </tr>
+                    ${benchmarkTable}
+                </table>
+            `;
+            
+            advancedDiv.className = 'results success';
+            advancedDiv.style.display = 'block';
+        }
+
+        function showError(message) {
+            const resultsDiv = document.getElementById('liveResults');
+            resultsDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            resultsDiv.className = 'results error';
+            resultsDiv.style.display = 'block';
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            if (initializeLibrary()) {
+                setupLiveDetection();
+                
+                // Load a sample JSON to start
+                loadExample('json');
+                console.log('✅ Format Detector demo ready');
+            }
+        });
+    </script>
+</body>
+</html>

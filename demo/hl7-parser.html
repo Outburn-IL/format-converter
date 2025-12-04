@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HL7 v2 Parser - Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .demo-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+        }
+        .demo-section h2 {
+            color: #34495e;
+            margin-top: 0;
+        }
+        textarea {
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        #hl7Input {
+            height: 200px;
+        }
+        .results {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+        .error {
+            border-left-color: #e74c3c;
+        }
+        .success {
+            border-left-color: #27ae60;
+        }
+        .warning {
+            border-left-color: #f39c12;
+        }
+        pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+            max-height: 500px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .secondary {
+            background: #95a5a6;
+        }
+        .secondary:hover {
+            background: #7f8c8d;
+        }
+        .button-group {
+            margin-bottom: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .info-box {
+            background: #e8f4f8;
+            border: 1px solid #b3d9e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .segment-info {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 5px 0;
+            border-left: 3px solid #007bff;
+        }
+        .field-count {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+        .hl7-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .feature {
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .feature strong {
+            color: #2c3e50;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .stat {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .stat strong {
+            color: #2c3e50;
+        }
+        .warning-banner {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #e74c3c;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+        .warning-banner strong {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 HL7 v2 Parser - Demo</h1>
+        <p class="subtitle">Parse and analyze HL7 v2.x messages in the browser</p>
+        
+        <div class="warning-banner">
+            <strong>⚠️ Browser Compatibility Notice</strong><br>
+            This demo requires HL7 parsing functionality that is not available in the browser build due to HL7.js dependencies.
+            HL7 v2 parsing requires server-side Node.js environment. Please use the Node.js version of this library for HL7 functionality.
+        </div>
+
+        <div class="info-box">
+            <strong>📖 About HL7 v2:</strong> Health Level 7 version 2.x is a messaging standard used extensively in healthcare systems for exchanging clinical and administrative data. This demo shows how to parse HL7 v2 messages into structured JSON format.
+        </div>
+
+        <div class="demo-section">
+            <h2>HL7 v2 Message Parser</h2>
+            <div class="button-group">
+                <button onclick="loadAdtExample()">Load ADT^A01 (Admit)</button>
+                <button onclick="loadOruExample()">Load ORU^R01 (Results)</button>
+                <button onclick="loadPidExample()">Load PID Sample</button>
+                <button onclick="clearInput()" class="secondary">Clear</button>
+            </div>
+            <textarea id="hl7Input" placeholder="Paste your HL7 v2 message here...
+
+Example format:
+MSH|^~\&|SYSTEM|SENDER|RECEIVER|DESTINATION|20231204103000||ADT^A01|12345|P|2.5
+EVN|A01|20231204103000
+PID|1||12345^^^HOSPITAL^MR||DOE^JOHN^MIDDLE||19800101|M||W|123 MAIN ST^^CITY^ST^12345|||||||123456789
+..."></textarea>
+            
+            <div class="button-group">
+                <button onclick="parseHl7()">Parse HL7 Message</button>
+                <button onclick="validateHl7()">Validate Message</button>
+                <button onclick="analyzeSegments()">Analyze Segments</button>
+            </div>
+
+            <div id="parseResults" class="results" style="display:none;">
+                <div class="stats" id="messageStats"></div>
+                <strong>Parsed JSON Result:</strong>
+                <pre id="parseOutput"></pre>
+            </div>
+
+            <div id="validationResults" class="results" style="display:none;">
+                <strong>Validation Results:</strong>
+                <div id="validationOutput"></div>
+            </div>
+
+            <div id="segmentResults" class="results" style="display:none;">
+                <strong>Segment Analysis:</strong>
+                <div id="segmentOutput"></div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Message Information</h2>
+            <div id="messageInfo" style="display:none;">
+                <div class="segment-info">
+                    <strong>Message Header (MSH):</strong>
+                    <div id="mshInfo"></div>
+                </div>
+                <div class="segment-info">
+                    <strong>Patient Information (PID):</strong>
+                    <div id="pidInfo"></div>
+                </div>
+                <div class="segment-info">
+                    <strong>Additional Segments:</strong>
+                    <div id="otherSegments"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hl7-features">
+            <div class="feature">
+                <strong>🔍 Message Parsing</strong><br>
+                Parse HL7 v2.x messages into JSON
+            </div>
+            <div class="feature">
+                <strong>📊 Segment Analysis</strong><br>
+                Analyze individual message segments
+            </div>
+            <div class="feature">
+                <strong>✅ Validation</strong><br>
+                Validate message structure and format
+            </div>
+            <div class="feature">
+                <strong>🏥 Multiple Types</strong><br>
+                ADT, ORU, ORM, and other message types
+            </div>
+            <div class="feature">
+                <strong>🔧 Field Extraction</strong><br>
+                Extract specific patient and clinical data
+            </div>
+            <div class="feature">
+                <strong>⚡ Browser Native</strong><br>
+                No server required for parsing
+            </div>
+        </div>
+    </div>
+
+    <script src="../dist/browser/browser.js"></script>
+    <script>
+        // Global variables
+        let formatConverter;
+        let currentMessage = null;
+        
+        // Initialize the library
+        function initializeLibrary() {
+            try {
+                if (typeof FormatConverter !== 'undefined') {
+                    const { FormatConverter: FC } = FormatConverter;
+                    formatConverter = new FC();
+                    console.log('✅ HL7 Parser library initialized successfully');
+                    return true;
+                } else {
+                    console.error('❌ FormatConverter is not available');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Failed to initialize library:', error.message);
+                return false;
+            }
+        }
+
+        function showResult(elementId, content, className = 'success') {
+            const element = document.getElementById(elementId);
+            const outputElement = document.getElementById(elementId.replace('Results', 'Output'));
+            
+            if (outputElement) {
+                if (typeof content === 'string') {
+                    outputElement.textContent = content;
+                } else {
+                    outputElement.innerHTML = content;
+                }
+            }
+            
+            element.className = `results ${className}`;
+            element.style.display = 'block';
+        }
+
+        function parseHl7() {
+            if (!formatConverter) {
+                showResult('parseResults', 'Library not initialized', 'error');
+                return;
+            }
+
+            try {
+                const hl7Data = document.getElementById('hl7Input').value.trim();
+                if (!hl7Data) {
+                    showResult('parseResults', 'Please enter HL7 message data', 'warning');
+                    return;
+                }
+
+                // Try to parse using the HL7 converter if available
+                let result;
+                if (formatConverter.convertFromHl7) {
+                    result = formatConverter.convertFromHl7(hl7Data);
+                } else {
+                    // Fallback to basic parsing
+                    result = basicHl7Parse(hl7Data);
+                }
+
+                currentMessage = result;
+                
+                // Show statistics
+                const segments = hl7Data.split('\n').filter(line => line.trim());
+                const messageType = extractMessageType(hl7Data);
+                
+                const stats = `
+                    <div class="stat"><strong>Segments:</strong> ${segments.length}</div>
+                    <div class="stat"><strong>Message Type:</strong> ${messageType || 'Unknown'}</div>
+                    <div class="stat"><strong>Size:</strong> ${hl7Data.length} chars</div>
+                `;
+                document.getElementById('messageStats').innerHTML = stats;
+                
+                showResult('parseResults', JSON.stringify(result, null, 2));
+                updateMessageInfo(result);
+                
+            } catch (error) {
+                showResult('parseResults', `Parse Error: ${error.message}`, 'error');
+                console.error('HL7 Parse Error:', error);
+            }
+        }
+
+        function validateHl7() {
+            const hl7Data = document.getElementById('hl7Input').value.trim();
+            if (!hl7Data) {
+                showResult('validationResults', 'Please enter HL7 message data', 'warning');
+                return;
+            }
+
+            const validationResults = [];
+            const lines = hl7Data.split('\n').filter(line => line.trim());
+            
+            // Basic validation checks
+            if (lines.length === 0) {
+                validationResults.push('❌ Empty message');
+            } else {
+                // Check for MSH header
+                const firstLine = lines[0];
+                if (firstLine.startsWith('MSH')) {
+                    validationResults.push('✅ Valid MSH header found');
+                    
+                    // Check field separators
+                    if (firstLine.length > 3 && firstLine[3] === '|') {
+                        validationResults.push('✅ Correct field separator');
+                    } else {
+                        validationResults.push('⚠️ Unusual field separator');
+                    }
+                } else {
+                    validationResults.push('❌ Missing or invalid MSH header');
+                }
+                
+                // Check segments
+                const segments = lines.map(line => line.substring(0, 3));
+                const uniqueSegments = [...new Set(segments)];
+                validationResults.push(`📊 ${segments.length} total segments, ${uniqueSegments.length} unique types`);
+                validationResults.push(`📋 Segment types: ${uniqueSegments.join(', ')}`);
+                
+                // Check for common required segments
+                if (segments.includes('PID')) {
+                    validationResults.push('✅ Patient ID (PID) segment found');
+                } else {
+                    validationResults.push('⚠️ No Patient ID (PID) segment found');
+                }
+            }
+            
+            const resultHtml = validationResults.map(result => `<div>${result}</div>`).join('');
+            showResult('validationResults', resultHtml);
+        }
+
+        function analyzeSegments() {
+            const hl7Data = document.getElementById('hl7Input').value.trim();
+            if (!hl7Data) {
+                showResult('segmentResults', 'Please enter HL7 message data', 'warning');
+                return;
+            }
+
+            const lines = hl7Data.split('\n').filter(line => line.trim());
+            const segmentAnalysis = [];
+            
+            lines.forEach((line, index) => {
+                const segmentType = line.substring(0, 3);
+                const fields = line.split('|');
+                const fieldCount = fields.length - 1; // Subtract 1 for segment ID
+                
+                let description = getSegmentDescription(segmentType);
+                
+                segmentAnalysis.push(`
+                    <div class="segment-info">
+                        <strong>${segmentType}</strong> - ${description}
+                        <span class="field-count">(${fieldCount} fields)</span>
+                        <br><small>Line ${index + 1}: ${line.substring(0, 80)}${line.length > 80 ? '...' : ''}</small>
+                    </div>
+                `);
+            });
+            
+            showResult('segmentResults', segmentAnalysis.join(''));
+        }
+
+        function updateMessageInfo(parsedMessage) {
+            // Extract MSH information
+            const mshInfo = extractMshInfo(parsedMessage);
+            const pidInfo = extractPidInfo(parsedMessage);
+            
+            document.getElementById('mshInfo').innerHTML = mshInfo;
+            document.getElementById('pidInfo').innerHTML = pidInfo;
+            document.getElementById('messageInfo').style.display = 'block';
+        }
+
+        function extractMshInfo(message) {
+            try {
+                if (message && message.MSH) {
+                    const msh = message.MSH;
+                    return `
+                        <div><strong>Sending Application:</strong> ${msh[3] || 'N/A'}</div>
+                        <div><strong>Receiving Application:</strong> ${msh[5] || 'N/A'}</div>
+                        <div><strong>Message Type:</strong> ${msh[9] || 'N/A'}</div>
+                        <div><strong>Message Control ID:</strong> ${msh[10] || 'N/A'}</div>
+                        <div><strong>Version:</strong> ${msh[12] || 'N/A'}</div>
+                    `;
+                }
+                return 'MSH information not available';
+            } catch (error) {
+                return `Error extracting MSH: ${error.message}`;
+            }
+        }
+
+        function extractPidInfo(message) {
+            try {
+                if (message && message.PID) {
+                    const pid = message.PID;
+                    return `
+                        <div><strong>Patient ID:</strong> ${pid[3] || 'N/A'}</div>
+                        <div><strong>Patient Name:</strong> ${pid[5] || 'N/A'}</div>
+                        <div><strong>Birth Date:</strong> ${pid[7] || 'N/A'}</div>
+                        <div><strong>Gender:</strong> ${pid[8] || 'N/A'}</div>
+                        <div><strong>Address:</strong> ${pid[11] || 'N/A'}</div>
+                    `;
+                }
+                return 'PID information not available';
+            } catch (error) {
+                return `Error extracting PID: ${error.message}`;
+            }
+        }
+
+        function getSegmentDescription(segmentType) {
+            const descriptions = {
+                'MSH': 'Message Header - Contains message routing and identification info',
+                'EVN': 'Event Type - Describes the trigger event',
+                'PID': 'Patient Identification - Patient demographic information',
+                'PV1': 'Patient Visit - Visit/encounter information',
+                'PV2': 'Patient Visit Additional - Additional visit information',
+                'OBX': 'Observation/Result - Clinical observations and results',
+                'OBR': 'Observation Request - Orders and requests',
+                'ORC': 'Common Order - Order control information',
+                'NK1': 'Next of Kin - Emergency contact information',
+                'AL1': 'Patient Allergy - Allergy information',
+                'DG1': 'Diagnosis - Diagnosis information',
+                'GT1': 'Guarantor - Financial responsibility',
+                'IN1': 'Insurance - Insurance information',
+                'NTE': 'Notes and Comments - Free text comments'
+            };
+            
+            return descriptions[segmentType] || 'Unknown segment type';
+        }
+
+        function extractMessageType(hl7Data) {
+            const mshLine = hl7Data.split('\n')[0];
+            if (mshLine && mshLine.startsWith('MSH')) {
+                const fields = mshLine.split('|');
+                if (fields.length > 9) {
+                    return fields[9]; // Message type is typically in field 9
+                }
+            }
+            return null;
+        }
+
+        function basicHl7Parse(hl7Data) {
+            const result = {};
+            const lines = hl7Data.split('\n').filter(line => line.trim());
+            
+            lines.forEach(line => {
+                const segmentType = line.substring(0, 3);
+                const fields = line.split('|');
+                
+                if (!result[segmentType]) {
+                    result[segmentType] = fields.slice(1); // Remove segment ID
+                } else {
+                    // Handle multiple segments of same type
+                    if (!Array.isArray(result[segmentType][0])) {
+                        result[segmentType] = [result[segmentType]];
+                    }
+                    result[segmentType].push(fields.slice(1));
+                }
+            });
+            
+            return result;
+        }
+
+        // Example message loaders
+        function loadAdtExample() {
+            document.getElementById('hl7Input').value = `MSH|^~\\&|EPIC|EPICADT|SMS|SMSADT|20231204103000|CHARRIS|ADT^A01|1817457|D|2.5||
+EVN|A01|20231204103000|||^CHARRIS^CARLA^A^^^^^CURRENT
+PID|1||0000112234^^^MPI^MR||DOE^JOHN^Q^^JR||19801122|M||W|1234 MAIN ST^^DALLAS^TX^75235^USA|GL|(214)271-1234|(214)271-1234|EN|S|BAPT|12343434|999-99-9999||||||||||||||||||||
+NK1|1|DOE^JANE^E||1234 MAIN ST^^DALLAS^TX^75235^USA|(214)271-1234|EC|||||||||||||||||||||||||||||
+PV1|1|I|2000^2012^01||||004777^ATTEND^AARON^A|||SUR|||V1|||004777^ATTEND^AARON^A|INP|CAT|VA|||||||||||||||||||||||||20231204103000|||||||||||
+AL1|1||DRUG|MORPHINE^MORPHINE||MODERATE|WHEAL, RASH|
+DG1|1|I9|53081|MAL NEO BLADDER WALL||F|
+GT1|1|1234|DOE^JOHN^Q^^JR||1234 MAIN ST^^DALLAS^TX^75235^USA|(214)271-1234|(214)271-1234|19801122|M|P|||SE|||||||||||||||||||||||||||||||
+IN1|1|PPO|ID1234|UNITED HEALTHCARE|6543 MAIN ST^^DALLAS^TX^75235^USA|JONES^SARAH|SE|||||||19801122|19801122||||1|DOE^JOHN^Q^^JR||1234 MAIN ST^^DALLAS^TX^75235^USA|Y|N|||||||||||||||||2000|||||||||||||A|F|||
+IN2|1||999-99-9999||||||||N||||||||||||||||||||A|
+IN3|1|ID1234|UNITED HEALTHCARE||X||X`;
+        }
+
+        function loadOruExample() {
+            document.getElementById('hl7Input').value = `MSH|^~\\&|LAB|LABADT|SMS|SMSADT|20231204140000||ORU^R01|1234567|P|2.5
+PID|1||0000112234^^^MPI^MR||DOE^JOHN^Q^^JR||19801122|M||W|1234 MAIN ST^^DALLAS^TX^75235^USA|GL|(214)271-1234
+OBR|1|12345|54321|CBC^COMPLETE BLOOD COUNT||20231204130000|20231204140000||||||20231204130000||12345^SMITH^MARY^A|||||||20231204140000|||F
+OBX|1|NM|WBC^WHITE BLOOD COUNT|1|8.5|10*3/uL|4.0-10.0|N|||F
+OBX|2|NM|RBC^RED BLOOD COUNT|2|4.2|10*6/uL|3.8-5.2|N|||F
+OBX|3|NM|HGB^HEMOGLOBIN|3|12.5|g/dL|11.0-15.0|N|||F
+OBX|4|NM|HCT^HEMATOCRIT|4|37.5|%|34.0-44.0|N|||F
+OBX|5|NM|PLT^PLATELETS|5|250|10*3/uL|150-450|N|||F`;
+        }
+
+        function loadPidExample() {
+            document.getElementById('hl7Input').value = `MSH|^~\\&|HIS|HOSPITAL|LAB|LABORATORY|20231204150000||ADT^A08|MSG001|P|2.5
+EVN|A08|20231204150000
+PID|1||PAT001^^^HOSPITAL^MR||SMITH^JANE^MARIE^DR^MD||19751215|F||AA|456 OAK AVE^APT 2B^CITY^ST^54321^USA|GL|(555)123-4567|(555)987-6543|EN|M|CATH|SSN123456789|DL987654321||||||||||||||||||||
+NK1|1|SMITH^ROBERT^JOHN||456 OAK AVE^APT 2B^CITY^ST^54321^USA|(555)123-4567|SP^SPOUSE|||||||||||||||||||||||||||||
+PV1|1|O|ER^ER01^01||||DOC123^PHYSICIAN^JOHN^A|||EM|||A|||DOC123^PHYSICIAN^JOHN^A|OUT|INS|||||||||||||||||||||||||20231204150000
+AL1|1||DRUG|PENICILLIN^PENICILLIN||SEVERE|ANAPHYLAXIS`;
+        }
+
+        function clearInput() {
+            document.getElementById('hl7Input').value = '';
+            document.getElementById('parseResults').style.display = 'none';
+            document.getElementById('validationResults').style.display = 'none';
+            document.getElementById('segmentResults').style.display = 'none';
+            document.getElementById('messageInfo').style.display = 'none';
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            if (initializeLibrary()) {
+                console.log('✅ HL7 Parser demo ready');
+            }
+        });
+    </script>
+</body>
+</html>

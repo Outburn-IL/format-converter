@@ -504,6 +504,10 @@ OBX|10|TX|0813321000^esccol^^^Escherichia coli^||.|0^""^^^^|^|N|||F|M|104^714^ M
   }
 }`,
         format: ContentFormat.JSON
+      },
+      {
+        input: '{"f":""',
+        format: ContentFormat.JSON
       }
     ];
 

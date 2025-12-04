@@ -28,10 +28,13 @@ const isJsonLikely = (input: string): boolean => {
     keyValueStructure: /{[^}]*:[^}]*}/.test(input), // Key-value pattern
   };
 
+  // Check for incomplete JSON patterns (like {"key": incomplete)
+  const hasIncompleteJsonPattern = /{[^}]*"[^"]*"\s*:\s*/.test(input);
+
   const isJsonLikely =
-    jsonStats.curlyBraces >= 2 &&
+    (jsonStats.curlyBraces >= 2 || (jsonStats.curlyBraces >= 1 && hasIncompleteJsonPattern)) &&
     jsonStats.colons >= 1 &&
-    (jsonStats.keyValueStructure || /{.*:.*}/.test(input)); // Strong JSON indicators
+    (jsonStats.keyValueStructure || /{.*:.*}/.test(input) || hasIncompleteJsonPattern); // Strong JSON indicators
 
   return isJsonLikely;
 };

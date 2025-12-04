@@ -1,9 +1,10 @@
 {
   "name": "@outburn/format-converter",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "A TypeScript library for converting between various data formats including CSV, XML, HL7 v2, and JSON with specialized healthcare message parsing",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
+  "browser": "./dist/browser/browser.js",
   "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
@@ -11,15 +12,25 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./browser": "./dist/browser/browser.js"
   },
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint src",
     "build": "npm run clean && tsup",
     "prepublishOnly": "npm run build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "demo": "node scripts/browser-demo.mjs"
   },
+  "files": [
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.d.ts",
+    "dist/browser/**",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "format-converter",
     "data-conversion",
@@ -28,6 +39,8 @@
     "json",
     "hl7",
     "hl7v2",
+    "hl7json",
+    "hl7toJson",
     "healthcare",
     "parser",
     "typescript",
@@ -49,13 +62,12 @@
   "devDependencies": {
     "@types/node": "^24.10.1",
     "eslint": "^9.39.1",
-    "prettier": "^3.7.3",
     "rimraf": "^6.1.2",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.48.1",
-    "vitest": "^4.0.14"
+    "vitest": "^4.0.15"
   },
   "repository": {
     "type": "git",
