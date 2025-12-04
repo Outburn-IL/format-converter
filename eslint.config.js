@@ -6,8 +6,9 @@ export default defineConfig([
   {
     ignores: ['node_modules/**', 'dist/**', 'eslint.config.js', 'vitest.config.ts'],
   },
+  // TypeScript files
   {
-    files: ['**/*.{js,mjs,cjs,ts}'],
+    files: ['**/*.ts'],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -28,6 +29,25 @@ export default defineConfig([
       'no-unused-vars': 'off',
       'no-console': 'off',
       '@typescript-eslint/no-explicit-any': 'off'
+    }
+  },
+  // JavaScript files (.js, .mjs, .cjs)
+  {
+    files: ['**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      ecmaVersion: 2022,
+      sourceType: 'module'
+    },
+    rules: {
+      indent: ['error', 2, { "SwitchCase": 1 }],
+      semi: ['error', 'always'],
+      quotes: ['error', 'single'],
+      'no-unused-vars': 'off',
+      'no-console': 'off'
     }
   }
 ]);

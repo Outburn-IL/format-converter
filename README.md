@@ -16,6 +16,34 @@ A TypeScript library for converting various data formats (CSV, XML, HL7 v2) to J
 npm install @outburn/format-converter
 ```
 
+## Browser Compatibility
+
+This library provides different builds for different environments:
+
+### Node.js (Full functionality)
+```typescript
+import { FormatConverter, TypeConverter, FormatDetector } from '@outburn/format-converter';
+// All features available including HL7 v2 conversion
+```
+
+### Browser (Limited functionality)
+```html
+<script src="node_modules/@outburn/format-converter/dist/browser/browser.js"></script>
+<script>
+const { TypeConverter, FormatDetector } = FormatUtils;
+// FormatConverter is not available in browser due to HL7.js dependency
+</script>
+```
+
+**Browser limitations:**
+- ❌ `FormatConverter` is not available (requires HL7.js which is not browser-compatible)
+- ❌ HL7 v2 parsing and conversion
+- ✅ `TypeConverter` for type detection and conversion
+- ✅ `FormatDetector` for format detection (JSON, XML, CSV, HL7)
+- ✅ All type definitions and enums
+
+For full functionality including HL7 processing, use the Node.js version.
+
 ## Usage
 
 ### Basic Usage

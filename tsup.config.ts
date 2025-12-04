@@ -25,7 +25,7 @@ export default defineConfig([
 
   // Browser build - bundled IIFE
   {
-    entry: ['src/index.ts'],
+    entry: ['src/browser.ts'],
     dts: false,
     format: ['iife'],
     platform: 'browser',
@@ -35,9 +35,9 @@ export default defineConfig([
     target: 'es2018',
     minify: true,
     treeshake: true,
-    noExternal: ['csvtojson', 'fast-xml-parser', 'hl7-dictionary', 'hl7js', 'jsonata'], // Force bundling these deps
+    noExternal: ['csvtojson', 'fast-xml-parser'], // Only bundle browser-compatible deps
     splitting: false, // No splitting for browser bundle
-    globalName: 'FormatConverter', // Global name for IIFE
+    globalName: 'FormatUtils', // Global name for IIFE
     outExtension({ format }) {
       return { js: '.js' };
     }
