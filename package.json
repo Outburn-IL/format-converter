@@ -24,9 +24,9 @@
     "demo": "node scripts/browser-demo.mjs"
   },
   "files": [
-    "dist/**.cjs",
-    "dist/**.mjs",
-    "dist/**.d.ts",
+    "dist/**/*.cjs",
+    "dist/**/*.mjs",
+    "dist/**/*.d.ts",
     "dist/browser/**",
     "README.md",
     "LICENSE"
