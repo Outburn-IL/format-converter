@@ -26,6 +26,7 @@
   "files": [
     "dist/**/*.cjs",
     "dist/**/*.mjs",
+    "dist/**/*.js",
     "dist/**/*.d.ts",
     "README.md",
     "LICENSE"
