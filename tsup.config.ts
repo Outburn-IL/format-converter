@@ -29,7 +29,7 @@ export default defineConfig([
     dts: false,
     format: ['iife'],
     platform: 'browser',
-    outDir: 'dist/browser',
+    outDir: 'dist',
     sourcemap: true,
     clean: false, // Don't clean since we have multiple builds
     target: 'es2018',

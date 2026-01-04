@@ -28,7 +28,7 @@ import { FormatConverter, TypeConverter, FormatDetector } from '@outburn/format-
 
 ### Browser (Limited functionality)
 ```html
-<script src="node_modules/@outburn/format-converter/dist/browser/browser.js"></script>
+<script src="node_modules/@outburn/format-converter/dist/browser.js"></script>
 <script>
 const { TypeConverter, FormatDetector } = FormatUtils;
 // FormatConverter is not available in browser due to HL7.js dependency
