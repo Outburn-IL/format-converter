@@ -4,7 +4,7 @@
   "description": "A TypeScript library for converting between various data formats including CSV, XML, HL7 v2, and JSON with specialized healthcare message parsing",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
-  "browser": "./dist/browser.js",
+  "browser": "./dist/browser.mjs",
   "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
@@ -13,7 +13,11 @@
       "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     },
-    "./browser": "./dist/browser.js"
+    "./browser": {
+      "types": "./dist/browser.d.ts",
+      "import": "./dist/browser.mjs",
+      "default": "./dist/browser.mjs"
+    }
   },
   "scripts": {
     "clean": "rimraf dist",

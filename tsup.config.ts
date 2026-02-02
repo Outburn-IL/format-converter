@@ -23,11 +23,11 @@ export default defineConfig([
     }
   },
 
-  // Browser build - bundled IIFE
+  // Browser build - ESM + bundled IIFE
   {
     entry: ['src/browser.ts'],
-    dts: false,
-    format: ['iife'],
+    dts: { entry: 'src/browser.ts' },
+    format: ['esm', 'iife'],
     platform: 'browser',
     outDir: 'dist',
     sourcemap: true,
@@ -39,6 +39,7 @@ export default defineConfig([
     splitting: false, // No splitting for browser bundle
     globalName: 'FormatUtils', // Global name for IIFE
     outExtension({ format }) {
+      if (format === 'esm') return { js: '.mjs' };
       return { js: '.js' };
     }
   }
