@@ -28,7 +28,7 @@ export class FormatConverter implements IFormatConverter {
     this.logger = logger || noopLogger;
   }
 
-  async toJson(input: any, contentType?: ContentType | string): Promise<any> {
+  toJson = async (input: any, contentType?: ContentType | string): Promise<any> => {
     if (!contentType || contentType === '') {
       this.logger.info('No content type provided, defaulting to \'application/json\'');
       contentType = ContentType.JSON;
@@ -66,13 +66,13 @@ export class FormatConverter implements IFormatConverter {
     }
 
     return parsedJson;
-  }
+  };
 
   csvToJson = parseCsv;
 
-  xmlToJson(input: string): Promise<any> {
+  xmlToJson = (input: string): Promise<any> => {
     return Promise.resolve(parseXml(input));
-  }
+  };
 
   hl7v2ToJson = v2json;
 }

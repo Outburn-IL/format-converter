@@ -45,36 +45,36 @@ export class TypeConverter implements ITypeConverter {
     EditorLanguage.PLAINTEXT
   ];
 
-  contentTypeToContentFormat(contentType: ContentType): ContentFormat {
+  contentTypeToContentFormat = (contentType: ContentType): ContentFormat => {
     return TypeConverter.contentTypeToContentFormatMap[contentType];
-  }
+  };
 
-  contentTypeToEditorLanguage(contentType: ContentType): EditorLanguage {
+  contentTypeToEditorLanguage = (contentType: ContentType): EditorLanguage => {
     const format = this.contentTypeToContentFormat(contentType);
     return this.contentFormatToEditorLanguage(format);
-  }
+  };
 
-  contentFormatToContentType(format: ContentFormat): ContentType | null {
+  contentFormatToContentType = (format: ContentFormat): ContentType | null => {
     return TypeConverter.contentFormatToContentTypeMap[format] || null;
-  }
+  };
 
-  contentFormatToEditorLanguage(format: ContentFormat): EditorLanguage {
+  contentFormatToEditorLanguage = (format: ContentFormat): EditorLanguage => {
     return TypeConverter.contentFormatToEditorLanguageMap[format];
-  }
+  };
 
-  stringToContentFormat(format: string): ContentFormat | null {
+  stringToContentFormat = (format: string): ContentFormat | null => {
     const normalizedFormat = format.toLowerCase();
     return TypeConverter.contentFormats.find(value => value === normalizedFormat) || null;
-  }
+  };
 
-  stringToContentType(contentType: string): ContentType | null {
+  stringToContentType = (contentType: string): ContentType | null => {
     const normalizedContentType = contentType.toLowerCase();
     return TypeConverter.contentTypes.find(value => normalizedContentType.startsWith(value)) || null;
-  }
+  };
 
-  stringToEditorLanguage(editorLanguage: string): EditorLanguage | null {
+  stringToEditorLanguage = (editorLanguage: string): EditorLanguage | null => {
     const normalizedLanguage = editorLanguage.toLowerCase();
     return TypeConverter.editorLanguages.find(value => value === normalizedLanguage) || null;
-  }
+  };
 
 }

@@ -100,12 +100,12 @@ const isCsvLikely = (input: string): boolean => {
 export class FormatDetector implements IFormatDetector {
   private static readonly typeConverter: ITypeConverter = new TypeConverter();
 
-  detectContentType(input: string): ContentType | null {
+  detectContentType = (input: string): ContentType | null => {
     const format = this.detectFormat(input);
     return FormatDetector.typeConverter.contentFormatToContentType(format);
-  }
+  };
 
-  detectFormat(input: string): ContentFormat {
+  detectFormat = (input: string): ContentFormat => {
     try {
       const trimmedInput = input?.trim();
       if (!trimmedInput) return ContentFormat.UNKNOWN;
@@ -118,9 +118,9 @@ export class FormatDetector implements IFormatDetector {
     } catch (e) {
       return ContentFormat.UNKNOWN;
     }
-  }
+  };
 
-  detectEditorLanguage(input: string): EditorLanguage {
+  detectEditorLanguage = (input: string): EditorLanguage => {
     const format = this.detectFormat(input);
     switch (format) {
       case ContentFormat.JSON:
@@ -130,5 +130,5 @@ export class FormatDetector implements IFormatDetector {
       default:
         return EditorLanguage.PLAINTEXT;
     }
-  }
+  };
 }
