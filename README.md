@@ -27,6 +27,8 @@ import { FormatConverter, TypeConverter, FormatDetector } from '@outburn/format-
 ```
 
 ### Browser (Limited functionality)
+
+**Using IIFE (script tag):**
 ```html
 <script src="node_modules/@outburn/format-converter/dist/browser.js"></script>
 <script>
@@ -35,12 +37,31 @@ const { TypeConverter, FormatDetector } = FormatUtils;
 </script>
 ```
 
+**Using ESM (module import):**
+```typescript
+import { TypeConverter, FormatDetector } from '@outburn/format-converter/browser';
+// FormatConverter is not available in browser due to HL7.js dependency
+```
+
+**Available exports:**
+```typescript
+// Classes
+import { TypeConverter, FormatDetector } from '@outburn/format-converter/browser';
+
+// Types
+import type { ITypeConverter, IFormatDetector } from '@outburn/format-converter/browser';
+
+// Enums
+import { ContentType, ContentFormat, EditorLanguage } from '@outburn/format-converter/browser';
+```
+
 **Browser limitations:**
 - ❌ `FormatConverter` is not available (requires HL7.js which is not browser-compatible)
 - ❌ HL7 v2 parsing and conversion
 - ✅ `TypeConverter` for type detection and conversion
 - ✅ `FormatDetector` for format detection (JSON, XML, CSV, HL7)
-- ✅ All type definitions and enums
+- ✅ All type definitions and enums (`ContentType`, `ContentFormat`, `EditorLanguage`)
+- ✅ TypeScript interfaces (`ITypeConverter`, `IFormatDetector`)
 
 For full functionality including HL7 processing, use the Node.js version.
 
@@ -346,7 +367,7 @@ npm run lint
 
 ## License
 MIT
-© Outburn Ltd. 2022–2025. All Rights Reserved.
+© Outburn Ltd. 2025. All Rights Reserved.
 
 ## Disclaimer
 This project is part of the [FUME](https://github.com/Outburn-IL/fume-community) open-source initiative and intended for use in FHIR tooling and development environments.
