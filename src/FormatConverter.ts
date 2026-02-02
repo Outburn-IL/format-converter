@@ -8,6 +8,18 @@ const noopLogger: ILogger = {
   error: () => {},
 };
 
+/**
+ * A format converter that transforms various input formats to JSON.
+ * 
+ * Supports conversion from multiple content types including HL7 V2.x messages,
+ * CSV data, XML documents, and JSON strings to standardized JSON format.
+ * 
+ * @example
+ * ```typescript
+ * const converter = new FormatConverter(logger);
+ * const jsonData = await converter.toJson(csvInput, ContentType.CSV);
+ * ```
+ */
 export class FormatConverter implements IFormatConverter {
   private static readonly typeConverter: ITypeConverter = new TypeConverter();
   private logger: ILogger;
@@ -25,7 +37,7 @@ export class FormatConverter implements IFormatConverter {
       ? FormatConverter.typeConverter.stringToContentType(contentType)
       : contentType;
     if (!suggestedContentType) {
-      throw new Error(`Unsupported Content-Type: ${suggestedContentType}`);
+      throw new Error(`Unsupported Content-Type: ${contentType}`);
     }
 
     let parsedJson: any;

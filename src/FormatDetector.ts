@@ -80,6 +80,23 @@ const isCsvLikely = (input: string): boolean => {
   return isCsvLikely;
 };
 
+/**
+ * A service class responsible for detecting and identifying various content formats and types.
+ * 
+ * The FormatDetector analyzes input strings to determine their format (JSON, XML, CSV, HL7, etc.)
+ * and provides corresponding content types and editor language mappings. It uses a series of
+ * validation functions to identify the most likely format of the input data.
+ * 
+ * @example
+ * ```typescript
+ * const detector = new FormatDetector();
+ * const format = detector.detectFormat('{"key": "value"}');
+ * // Returns: ContentFormat.JSON
+ * 
+ * const contentType = detector.detectContentType('<root></root>');
+ * // Returns: ContentType corresponding to XML format
+ * ```
+ */
 export class FormatDetector implements IFormatDetector {
   private static readonly typeConverter: ITypeConverter = new TypeConverter();
 
